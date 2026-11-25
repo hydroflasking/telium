@@ -11,8 +11,8 @@ import { stubMedia } from './fake-webrtc.js';
 
 const GUILD_PANES = ['Overview', 'Roles', 'Channel permissions',
   'Gates and origins', 'Moderation queue', 'Bans', 'Emoji', 'Audit log'];
-const USER_PANES = ['Profile', 'Account', 'Messages', 'Calls & audio', 'Profile lookups',
-  'Network privacy', 'Connected servers', 'Notifications', 'Appearance', 'Extras', 'Local data'];
+const USER_PANES = ['Profile', 'Account', 'Messages & calls', 'Profile lookups',
+  'Network privacy', 'Connected servers', 'Notifications', 'Themes', 'Language & formatting', 'Extras', 'Local data'];
 
 async function boot({ strict = false } = {}) {
   const server = createFakeServer();
@@ -185,7 +185,7 @@ describe('every screen mounts', () => {
 
     await openUserSettings(user);
     const dialog = await screen.findByRole('dialog');
-    await user.click(within(dialog).getByRole('button', { name: 'Appearance' }));
+    await user.click(within(dialog).getByRole('button', { name: 'Language & formatting' }));
     await user.click(await screen.findByRole('switch', { name: 'Show the member list' }));
     await dismiss(user);
 
@@ -265,7 +265,7 @@ describe('every screen mounts', () => {
     expect(pill.getAttribute('title')).toBe('@alice:home.example');
     await user.click(pill);
     const dialog = await screen.findByRole('dialog');
-    expect(within(dialog).getByRole('button', { name: /^@alice:home\.example, copy username$/ })).toBeTruthy();
+    expect(within(dialog).getByRole('button', { name: /^alice@home\.example, copy username$/ })).toBeTruthy();
     expect(dialog.closest('.popover')).toBeTruthy();
     await dismiss(user);
 
@@ -663,7 +663,7 @@ describe('links and stickers', () => {
     await waitFor(() => expect(server.state.sent.at(-1)?.content).toBe(shareUrl));
     await waitFor(() => expect(screen.getByAltText('GIF').getAttribute('src'))
       .toBe('https://media.klipy.com/test/celebrate.gif'));
-    expect(server.state.klipyRequests.some(({ query }) => query.q === 'big-brother-is-watching-you-5')).toBe(true);
+    expect(server.state.klipyRequests.some(({ query }) => query.slugs === 'big-brother-is-watching-you-5')).toBe(true);
     expect(server.state.embedRequests).not.toContain(shareUrl);
   });
 
